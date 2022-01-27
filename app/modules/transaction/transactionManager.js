@@ -1,10 +1,6 @@
 import Utils from "../../utils";
 import TransactionModel from "../../models/transaction";
-import {
-  apiSuccessMessage,
-  apiFailureMessage,
-  httpConstants,
-} from "../../common/constants";
+import { apiSuccessMessage, apiFailureMessage, httpConstants } from "../../common/constants";
 
 export default class TransactionManager {
   async addTransaction(requestData) {
@@ -13,9 +9,7 @@ export default class TransactionManager {
     return response;
   }
   getTransactionList = async (requestData) => {
-    const transactionListRequest = this.parseGettransactionListRequest(
-      requestData
-    );
+    const transactionListRequest = this.parseGettransactionListRequest(requestData);
     const transactionList = await TransactionModel.getTransactionList(
       transactionListRequest.requestData,
       transactionListRequest.selectionKeys,
@@ -50,12 +44,7 @@ export default class TransactionManager {
       delete requestObj.selectionKeys;
     }
     let searchQuery = [];
-    if (
-      requestObj.searchKeys &&
-      requestObj.searchValue &&
-      Array.isArray(requestObj.searchKeys) &&
-      requestObj.searchKeys.length
-    ) {
+    if (requestObj.searchKeys && requestObj.searchValue && Array.isArray(requestObj.searchKeys) && requestObj.searchKeys.length) {
       requestObj.searchKeys.map((searchKey) => {
         let searchRegex = { $regex: requestObj.searchValue, $options: "i" };
         searchQuery.push({ [searchKey]: searchRegex });
@@ -82,8 +71,7 @@ export default class TransactionManager {
     }
 
     let cumulativeGasUsed = 0;
-    if (receipt && receipt.cumulativeGasUsed)
-      cumulativeGasUsed = receipt.cumulativeGasUsed;
+    if (receipt && receipt.cumulativeGasUsed) cumulativeGasUsed = receipt.cumulativeGasUsed;
 
     let logs = [];
     if (receipt && receipt.logs.length > 0) logs = receipt.logs;
