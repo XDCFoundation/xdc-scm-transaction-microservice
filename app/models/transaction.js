@@ -21,6 +21,7 @@ const TransactionSchema = new Schema({
   logs: { type: Array, default: [] },
   status: { type: Boolean, default: false },
   timestamp: { type: Number, default: 0 },
+  date: { type: Date, default: new Date() },
   modifiedOn: { type: Number, default: Date.now() },
   createdOn: { type: Number, default: Date.now() },
   isDeleted: { type: Boolean, default: false },

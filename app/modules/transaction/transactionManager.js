@@ -1,6 +1,7 @@
 import Utils from "../../utils";
 import TransactionModel from "../../models/transaction";
 import { apiSuccessMessage, apiFailureMessage, httpConstants } from "../../common/constants";
+import XdcService from "../../service/xdcService";
 
 export default class TransactionManager {
   async addTransaction(requestData) {
@@ -119,4 +120,20 @@ export default class TransactionManager {
       return tx;
     }
   }
+
+    saveNewTransactionsIntoDB = () => {
+
+    }
+
+    fetchTransactionForNewContract = async ({contractAddress}) => {
+        if (!contractAddress) return
+        const transactionList = await XdcService.getTransactionsForContract(contractAddress)
+        if (!transactionList || !transactionList.length) return
+        transactionList.forEach((txnObj)=>{
+          delete txnObj._id;
+          txnObj.contractAddress = txnObj.contractAddress || txnObj.to
+          txnObj.date = new Date(txnObj.timestamp * 1000)
+        })
+        await TransactionModel.collection.insertMany(transactionList);
+    }
 }
