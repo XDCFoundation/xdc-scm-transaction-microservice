@@ -258,7 +258,7 @@ export default class TransactionManager {
             month: { $month: "$date" },
             year: { $year: "$date" }
           },
-          uniqueCount: { $addToSet: "$from" },
+          addresses: { $addToSet: "$from" },
           dateString: { $first: "$date" }
         }
       },
@@ -270,7 +270,8 @@ export default class TransactionManager {
           {
             $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
           },
-          activeUsers: { $size: "$uniqueCount" },
+          activeUsers: { $size: "$addresses" },
+          addresses:1,
           _id: 0
         }
       }
@@ -278,4 +279,6 @@ export default class TransactionManager {
 
     return response;
   }
+
+ 
 }
