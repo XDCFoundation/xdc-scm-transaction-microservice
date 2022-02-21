@@ -1,6 +1,4 @@
-import Utils from "../../utils";
 import TransactionModel from "../../models/transaction";
-import { apiSuccessMessage, apiFailureMessage, httpConstants } from "../../common/constants";
 import XdcService from "../../service/xdcService";
 
 export default class TransactionManager {
@@ -127,13 +125,26 @@ export default class TransactionManager {
 
     fetchTransactionForNewContract = async ({contractAddress}) => {
         if (!contractAddress) return
-        const transactionList = await XdcService.getTransactionsForContract(contractAddress)
-        if (!transactionList || !transactionList.length) return
-        transactionList.forEach((txnObj)=>{
-          delete txnObj._id;
-          txnObj.contractAddress = txnObj.contractAddress || txnObj.to
-          txnObj.date = new Date(txnObj.timestamp * 1000)
-        })
-        await TransactionModel.collection.insertMany(transactionList);
+        const transactionsExists = await TransactionModel.getTransaction({contractAddress});
+        if (transactionsExists) {
+            lhtWebLog("fetchTransactionForNewContract", `Transactions already fetched for ${contractAddress} from Mainnet`)
+            return
+        }
+        const transactionCount = await XdcService.getTransactionsCountForContract(contractAddress)
+        if (!transactionCount) return
+        let skip = 0, limit = 50;
+        while (skip < transactionCount) {
+            const transactionList = await XdcService.getTransactionsForContract(contractAddress, skip, limit)
+            if (!transactionList || !transactionList.length) return
+            transactionList.forEach((txnObj) => {
+                delete txnObj._id;
+                txnObj.contractAddress = txnObj.contractAddress || txnObj.to
+                txnObj.date = new Date(txnObj.timestamp * 1000)
+                txnObj.network = "XDC Mainnet"
+            })
+            await TransactionModel.collection.insertMany(transactionList);
+            skip += limit;
+        }
+        lhtWebLog("fetchTransactionForNewContract", `${transactionCount} Transactions fetched for ${contractAddress} from Mainnet`)
     }
 }
