@@ -1,6 +1,8 @@
 import Utils from "../../utils";
 import TransactionModel from "../../models/transaction";
 import { apiSuccessMessage, apiFailureMessage, httpConstants } from "../../common/constants";
+import XdcService from "../../service/xdcService";
+import moment from "moment";
 
 export default class TransactionManager {
   async addTransaction(requestData) {
@@ -118,5 +120,162 @@ export default class TransactionManager {
       tx.creates = receipt.contractAddress.toLowerCase() || "";
       return tx;
     }
+  }
+
+  saveNewTransactionsIntoDB = () => {
+
+  }
+
+  fetchTransactionForNewContract = async ({ contractAddress }) => {
+    if (!contractAddress) return
+    const transactionList = await XdcService.getTransactionsForContract(contractAddress)
+    if (!transactionList || !transactionList.length) return
+    transactionList.forEach((txnObj) => {
+      delete txnObj._id;
+      txnObj.contractAddress = txnObj.contractAddress || txnObj.to
+      txnObj.date = new Date(txnObj.timestamp * 1000)
+    })
+    await TransactionModel.collection.insertMany(transactionList);
+  }
+
+  getTransactionAnalytics = async (req) => {
+
+    let numberOfDays = Number(req.numberOfDays);
+    // let endTime = parseInt(moment().endOf("day").valueOf() / 1000);
+    // let startTime = parseInt(moment().subtract(numberOfDays, "days").startOf("day").valueOf() / 1000);
+    let startTime = moment.utc().subtract(numberOfDays, "days").startOf('day');
+    let endTime = moment.utc().endOf('day');
+
+    let response = await TransactionModel.aggregate(
+      [{
+        $match: {
+          $and: [
+            { "date": { "$gte": new Date(startTime), "$lte": new Date(endTime) } },
+            { "contractAddress": req.address }
+          ]
+        }
+      },
+      {
+        $group:
+        {
+          _id:
+          {
+            day: { $dayOfMonth: "$date" },
+            month: { $month: "$date" },
+            year: { $year: "$date" }
+          },
+          count: { $sum: 1 },
+          dateString: { $first: "$date" }
+        }
+      },
+      { $sort: { dateString: 1 } },
+      {
+        $project:
+        {
+          dateString:
+          {
+            $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
+          },
+          count: 1,
+          _id: 0
+        }
+      }
+      ])
+
+    return response;
+
+  }
+  getGasUsedAnalytics = async (req) => {
+
+    let numberOfDays = Number(req.numberOfDays);
+    // let endTime = parseInt(moment().endOf("day").valueOf() / 1000);
+    // let startTime = parseInt(moment().subtract(numberOfDays, "days").startOf("day").valueOf() / 1000);
+    let startTime = moment.utc().subtract(numberOfDays, "days").startOf('day');
+    let endTime = moment.utc().endOf('day');
+
+    let response = await TransactionModel.aggregate(
+      [{
+        $match: {
+          $and: [
+            { "date": { "$gte": new Date(startTime), "$lte": new Date(endTime) } },
+            { "contractAddress": req.address }
+          ]
+        }
+      },
+      {
+        $group:
+        {
+          _id:
+          {
+            day: { $dayOfMonth: "$date" },
+            month: { $month: "$date" },
+            year: { $year: "$date" }
+          },
+          gasUsedOverTime: { $sum: "$gasUsed" },
+          dateString: { $first: "$date" }
+        }
+      },
+      { $sort: { dateString: 1 } },
+      {
+        $project:
+        {
+          dateString:
+          {
+            $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
+          },
+          gasUsedOverTime: 1,
+          _id: 0
+        }
+      }
+      ])
+
+    return response;
+  }
+
+  getActiveUsers = async (req) => {
+
+    let numberOfDays = Number(req.numberOfDays);
+    // let endTime = parseInt(moment().endOf("day").valueOf() / 1000);
+    // let startTime = parseInt(moment().subtract(numberOfDays, "days").startOf("day").valueOf() / 1000);
+    let startTime = moment.utc().subtract(numberOfDays, "days").startOf('day');
+    let endTime = moment.utc().endOf('day');
+
+    let response = await TransactionModel.aggregate(
+      [{
+        $match: {
+          $and: [
+            { "date": { "$gte": new Date(startTime), "$lte": new Date(endTime) } },
+            { "contractAddress": req.address }
+          ]
+        }
+      },
+      {
+        $group:
+        {
+          _id:
+          {
+            day: { $dayOfMonth: "$date" },
+            month: { $month: "$date" },
+            year: { $year: "$date" }
+          },
+          uniqueCount: { $addToSet: "$from" },
+          dateString: { $first: "$date" }
+        }
+      },
+      { $sort: { dateString: 1 } },
+      {
+        $project:
+        {
+          dateString:
+          {
+            $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
+          },
+          activeUsers: { $size: "$uniqueCount" },
+          _id: 0
+        }
+      }
+      ])
+
+    return response;
   }
 }

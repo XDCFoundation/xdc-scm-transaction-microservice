@@ -33,4 +33,48 @@ export default class TransactionController {
       httpConstants.RESPONSE_CODES.OK
     );
   }
+
+  async getTransactionAnalytics(request, response) {
+    lhtWebLog("Inside getTransactionAnalytics", request.body, "getTransactionAnalytics", 0, "");
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getTransactionAnalytics(request.body));
+    if (!getMetersRes) {
+      return Utils.handleError(error, request, response);
+    }
+    return Utils.response(
+      response,
+      getMetersRes,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
+   async getGasUsedAnalytics(request, response) {
+    lhtWebLog("Inside getGasUsedAnalytics", request.body, "getGasUsedAnalytics", 0, "");
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getGasUsedAnalytics(request.body));
+    if (!getMetersRes) {
+      return Utils.handleError(error, request, response);
+    }
+    return Utils.response(
+      response,
+      getMetersRes,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
+
+  async getActiveUsersAnalytics(request, response) {
+    lhtWebLog("Inside getGasUsedAnalytics", request.body, "getGasUsedAnalytics", 0, "");
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getActiveUsers(request.body));
+    if (!getMetersRes) {
+      return Utils.handleError(error, request, response);
+    }
+    return Utils.response(
+      response,
+      getMetersRes,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
 }
