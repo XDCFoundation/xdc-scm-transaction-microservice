@@ -1,23 +1,29 @@
 import AMQPController from "../../../library";
 import Config from "../../../config";
 import {amqpConstants, apiFailureMessage} from "../../common/constants";
+import TransactionManager from "../transaction/transactionManager";
 
 export default class RabbitMQ {
 
     async insertObjInUpdateContentServiceQueue(queueData) {
-        // return await AMQPController.insertInQueue(AMQP_CONSTANTS.EXCHANGE_NAME.UPDATE_CONTENT_SERVICE_EXCHANGE, {}, {}, {}, {}, {}, {}, AMQP_CONSTANTS.EXCHANGE_TYPE_FANOUT, AMQP_CONSTANTS.PUBLISHER_SUBSCRIBER_QUEUE, queueData);
+        // return await AMQPController.insertInQueue(Config.TRANSACTION_EXCHANGE, Config.TRANSACTION_QUEUE, {}, {}, {}, {}, {}, {}, AMQP_CONSTANTS.EXCHANGE_TYPE_FANOUT, AMQP_CONSTANTS.PUBLISHER_SUBSCRIBER_QUEUE, queueData);
     }
 
     async initializeRabbitMQListener() {
-        await AMQPController.getFromQueue(Config.BLOCKCHAIN_FOLLOWER_TXN_EXCHANGE, Config.BLOCKCHAIN_FOLLOWER_TXN_QUEUE, amqpConstants.exchangeType.FANOUT, amqpConstants.queueType.PUBLISHER_SUBSCRIBER_QUEUE, RabbitMQ.publishUpdateHandler, {}, {});
+        await AMQPController.getFromQueue(Config.TRANSACTION_EXCHANGE, Config.TRANSACTION_QUEUE, amqpConstants.exchangeType.FANOUT, amqpConstants.queueType.PUBLISHER_SUBSCRIBER_QUEUE, RabbitMQ.publishUpdateHandler, {}, {});
     };
 
-    static publishUpdateHandler(channel, payload) {
+    static publishUpdateHandler(channel, queueData) {
         try {
-            let parsedPayload = JSON.parse(payload);
-            let requestData;
-            if (!parsedPayload || !parsedPayload.txnList)
-                return lhtWebLog('publishUpdateHandler check error', apiFailureMessage.INVALID_REQUEST, payload);
+            let parsedData = JSON.parse(queueData);
+            if (!parsedData || !parsedData.operationType)
+                return lhtWebLog('publishUpdateHandler check error', apiFailureMessage.INVALID_REQUEST, parsedData);
+            switch (parsedData.operationType) {
+                case "CONTRACT_ADDED":
+                    return new TransactionManager().fetchTransactionForNewContract(parsedData.payload);
+                case "BLOCK_RECEIVED_FROM_FOLLOWER":
+                    return new TransactionManager().saveNewTransactionsIntoDB(parsedData.payload);
+            }
 
         } catch (error) {
             return lhtWebLog('publishUpdateHandler catch', apiFailureMessage.INVALID_REQUEST, error);

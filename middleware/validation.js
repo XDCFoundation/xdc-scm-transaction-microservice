@@ -9,6 +9,14 @@ module.exports = {
     });
     await validate(schema, req.body, res, next);
   },
+  validateAnalyticsRequest: async (req, res, next) => {
+    const schema = yup.object().shape({
+      numberOfDays: yup.string().required(),
+      address: yup.string().required(),
+      // password: yup.string().min(8).required()
+    });
+    await validate(schema, req.body, res, next);
+  },
 };
 
 const validate = async (schema, reqData, res, next) => {
