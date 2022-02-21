@@ -17,7 +17,7 @@ export default class TransactionManager {
       transactionListRequest.limit,
       transactionListRequest.sortingKey
     );
-    let totalCount = await TransactionModel.countData();
+    let totalCount = await TransactionModel.countData({contractAddress: requestData.contractAddress});
     return { transactionList, totalCount };
   };
 
