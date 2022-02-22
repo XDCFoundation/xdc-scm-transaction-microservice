@@ -137,12 +137,13 @@ export default class TransactionManager {
         while (skip < transactionCount) {
             const transactionList = await XdcService.getTransactionsForContract(contractAddress, skip, limit)
             if (!transactionList || !transactionList.length) return
-            transactionList.forEach((txnObj) => {
+            for (let txnObj of transactionList){
                 delete txnObj._id;
                 txnObj.contractAddress = txnObj.contractAddress || txnObj.to
                 txnObj.date = new Date(txnObj.timestamp * 1000)
                 txnObj.network = "XDC Mainnet"
-            })
+                txnObj.function = await XdcService.getMethodName(txnObj.input)
+            }
             await TransactionModel.collection.insertMany(transactionList);
             skip += limit;
         }
