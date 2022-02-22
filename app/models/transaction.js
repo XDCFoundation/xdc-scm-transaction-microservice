@@ -17,6 +17,7 @@ const TransactionSchema = new Schema({
   s: { type: String, default: "" },
   v: { type: String, default: "" },
   contractAddress: { type: String, default: "" },
+  network: { type: String, default: "XDC Mainnet" }, //TODO: To be removed in next version
   cumulativeGasUsed: { type: Number, default: 0 },
   logs: { type: Array, default: [] },
   status: { type: Boolean, default: false },
@@ -24,8 +25,6 @@ const TransactionSchema = new Schema({
   date: { type: Date, default: new Date() },
   modifiedOn: { type: Number, default: Date.now() },
   createdOn: { type: Number, default: Date.now() },
-  isDeleted: { type: Boolean, default: false },
-  isActive: { type: Boolean, default: true },
 });
 TransactionSchema.method({
   saveData: async function () {

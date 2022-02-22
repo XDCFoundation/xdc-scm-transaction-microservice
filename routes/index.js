@@ -12,6 +12,9 @@ module.exports = (app) => {
   app.post("/get-transaction-analytics",ValidationManger.validateAnalyticsRequest, new TransactionModule().getTransactionAnalytics);
   app.post("/get-gas-used-analytics", ValidationManger.validateAnalyticsRequest, new TransactionModule().getGasUsedAnalytics);
   app.post("/get-active-users-analytics",ValidationManger.validateAnalyticsRequest, new TransactionModule().getActiveUsersAnalytics);
+  app.post("/get-top-callers",ValidationManger.validateAnalyticsRequest, new TransactionModule().getTopCallers);
+  app.post("/get-top-function-calls",ValidationManger.validateAnalyticsRequest, new TransactionModule().getTopFunctionCalls);
+
 
 
   //networks route
