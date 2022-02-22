@@ -322,7 +322,7 @@ export default class TransactionManager {
       {
         $project:
         {
-          data:1,
+          network:"$data",
           count:1,
           address: "$_id",
           _id:0
@@ -352,7 +352,7 @@ export default class TransactionManager {
             $group:
                 {
                   _id: "$function",
-                  data: {$first:"$$ROOT"},
+                  data: {$first:"$network"},
                   count : { $sum : 1}
                       
                 }
@@ -361,7 +361,7 @@ export default class TransactionManager {
       {
         $project:
         {
-          data:1,
+          network:"$data",
           count:1,
           function: "$_id",
           _id:0
