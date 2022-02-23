@@ -176,8 +176,22 @@ export default class TransactionManager {
                         month: { $month: "$date" },
                         year: { $year: "$date" }
                       },
-                  count: { $sum: 1 },
-                  dateString: { $first: "$date" }
+                   failedTransactions: {
+                        "$sum": { "$cond": [
+                            { "$eq": [ "$status", false ] },
+                            1,
+                            0
+                        ]}
+                    },
+                    successfullTransactions: {
+                      "$sum": { "$cond": [
+                          { "$eq": [ "$status", true ] },
+                          1,
+                          0
+                      ]}
+                  },
+                  dateString: { $first: "$date" },
+                  count : {$sum :1}
                 }
           },
           { $sort: { dateString: 1 } },
@@ -189,7 +203,9 @@ export default class TransactionManager {
                         $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
                       },
                   count: 1,
-                  _id: 0
+                  _id: 0,
+                  failedTransactions:1,
+                  successfullTransactions:1
                 }
           }
         ])
