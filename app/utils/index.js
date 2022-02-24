@@ -105,7 +105,7 @@ export default class Utils {
     functionName,
     message,
     payload,
-    developerAlias,
+    developerAlias = 'AyushK',
     logType = "INFO"
   ) {
     console.log(

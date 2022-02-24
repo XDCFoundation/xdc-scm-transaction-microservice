@@ -125,6 +125,7 @@ export default class TransactionManager {
         lhtWebLog("saveNewTransactionsIntoDB", `${transactionList.length} Transactions fetched from follower`)
         let contractArray = transactionList.map(({contractAddress}) => contractAddress)
         contractArray = new Set(contractArray);
+        lhtWebLog("saveNewTransactionsIntoDB", `Transactions fetched for ${contractArray.length} contracts`, contractArray)
         const SCMSystemContracts = await XdcService.getSCMSystemContracts(contractArray)
         if (!SCMSystemContracts || !SCMSystemContracts.length) return
         transactionList = transactionList.filter(txnObj => SCMSystemContracts.includes(txnObj.contractAddress))
@@ -134,6 +135,7 @@ export default class TransactionManager {
             txnData.date = new Date(txnData.timestamp * 1000)
             txnData.network = "XDC Mainnet"
             txnData.function = await XdcService.getMethodName(txnData.input)
+            lhtWebLog("saveNewTransactionsIntoDB", `Saving transaction for ${txnData.contractAddress} - ${txnData.function}`)
         }
         await TransactionModel.collection.insertMany(transactionList);
         lhtWebLog("saveNewTransactionsIntoDB", `${transactionList.length} Transactions added to DB`)
@@ -346,7 +348,7 @@ export default class TransactionManager {
                   _id: "$from",
                   data: {$first:"$network"},
                   count : { $sum : 1}
-                      
+
                 }
       },
       { $sort: { count: -1 } },
@@ -385,7 +387,7 @@ export default class TransactionManager {
                   _id: "$function",
                   data: {$first:"$network"},
                   count : { $sum : 1}
-                      
+
                 }
       },
       { $sort: { count: -1 } },
