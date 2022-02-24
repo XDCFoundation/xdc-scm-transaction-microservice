@@ -122,10 +122,9 @@ export default class TransactionManager {
 
     saveNewTransactionsIntoDB = async (transactionList) => {
         if (!transactionList || !transactionList.length) return
-        lhtWebLog("saveNewTransactionsIntoDB", `${transactionList.length} Transactions fetched from follower`)
         let contractArray = transactionList.map(({contractAddress}) => contractAddress)
         contractArray = new Set(contractArray);
-        lhtWebLog("saveNewTransactionsIntoDB", `Transactions fetched for ${contractArray.length} contracts`, contractArray)
+        lhtWebLog("saveNewTransactionsIntoDB", `${transactionList.length} Transactions fetched for ${contractArray.length} contracts`, contractArray)
         const SCMSystemContracts = await XdcService.getSCMSystemContracts(contractArray)
         if (!SCMSystemContracts || !SCMSystemContracts.length) return
         transactionList = transactionList.filter(txnObj => SCMSystemContracts.includes(txnObj.contractAddress))

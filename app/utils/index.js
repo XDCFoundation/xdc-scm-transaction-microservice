@@ -109,7 +109,7 @@ export default class Utils {
     logType = "INFO"
   ) {
     console.log(
-      `[ {this.getFormattedDate()} ] ${logType}: ${functionName}: ${message}: ${JSON.stringify(
+      `[ ${Utils.getFormattedDate()} ] ${logType}: ${functionName}: ${message}: ${JSON.stringify(
         payload
       )}: Developer : ${developerAlias}`
     );
