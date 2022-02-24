@@ -120,9 +120,24 @@ export default class TransactionManager {
     }
   }
 
-  saveNewTransactionsIntoDB = () => {
-
-  }
+    saveNewTransactionsIntoDB = async (transactionList) => {
+        if (!transactionList || !transactionList.length) return
+        lhtWebLog("saveNewTransactionsIntoDB", `${transactionList.length} Transactions fetched from follower`)
+        let contractArray = transactionList.map(({contractAddress}) => contractAddress)
+        contractArray = new Set(contractArray);
+        const SCMSystemContracts = await XdcService.getSCMSystemContracts(contractArray)
+        if (!SCMSystemContracts || !SCMSystemContracts.length) return
+        transactionList = transactionList.filter(txnObj => SCMSystemContracts.includes(txnObj.contractAddress))
+        for (let txnData of transactionList) {
+            delete txnData._id;
+            txnData.contractAddress = txnData.contractAddress || txnData.to
+            txnData.date = new Date(txnData.timestamp * 1000)
+            txnData.network = "XDC Mainnet"
+            txnData.function = await XdcService.getMethodName(txnData.input)
+        }
+        await TransactionModel.collection.insertMany(transactionList);
+        lhtWebLog("saveNewTransactionsIntoDB", `${transactionList.length} Transactions added to DB`)
+    }
 
     fetchTransactionForNewContract = async ({contractAddress}) => {
         if (!contractAddress) return
@@ -137,7 +152,7 @@ export default class TransactionManager {
         while (skip < transactionCount) {
             const transactionList = await XdcService.getTransactionsForContract(contractAddress, skip, limit)
             if (!transactionList || !transactionList.length) return
-            for (let txnObj of transactionList){
+            for (let txnObj of transactionList) {
                 delete txnObj._id;
                 txnObj.contractAddress = txnObj.contractAddress || txnObj.to
                 txnObj.date = new Date(txnObj.timestamp * 1000)
