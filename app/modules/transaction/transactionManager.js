@@ -191,8 +191,22 @@ export default class TransactionManager {
                         month: { $month: "$date" },
                         year: { $year: "$date" }
                       },
-                  count: { $sum: 1 },
-                  dateString: { $first: "$date" }
+                   failedTransactions: {
+                        "$sum": { "$cond": [
+                            { "$eq": [ "$status", false ] },
+                            1,
+                            0
+                        ]}
+                    },
+                    successfullTransactions: {
+                      "$sum": { "$cond": [
+                          { "$eq": [ "$status", true ] },
+                          1,
+                          0
+                      ]}
+                  },
+                  dateString: { $first: "$date" },
+                  count : {$sum :1}
                 }
           },
           { $sort: { dateString: 1 } },
@@ -204,7 +218,9 @@ export default class TransactionManager {
                         $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
                       },
                   count: 1,
-                  _id: 0
+                  _id: 0,
+                  failedTransactions:1,
+                  successfullTransactions:1
                 }
           }
         ])
@@ -285,24 +301,106 @@ export default class TransactionManager {
                         month: { $month: "$date" },
                         year: { $year: "$date" }
                       },
-                  uniqueCount: { $addToSet: "$from" },
-                  dateString: { $first: "$date" }
+                      addresses: { $addToSet: "$from" },
+                      dateString: { $first: "$date" }
                 }
-          },
-          { $sort: { dateString: 1 } },
+      },
+      { $sort: { dateString: 1 } },
+      {
+        $project:
+        {
+          dateString:
           {
-            $project:
-                {
-                  dateString:
-                      {
-                        $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
-                      },
-                  activeUsers: { $size: "$uniqueCount" },
-                  _id: 0
-                }
-          }
-        ])
+            $dateToString: { format: "%Y-%m-%d", date: "$dateString" }
+          },
+          activeUsers: { $size: "$addresses" },
+          addresses:1,
+          _id: 0
+        }
+      }
+      ])
 
     return response;
   }
+
+  getTopCallers = async (req) => {
+
+    let numberOfDays = Number(req.numberOfDays);
+    // let endTime = parseInt(moment().endOf("day").valueOf() / 1000);
+    // let startTime = parseInt(moment().subtract(numberOfDays, "days").startOf("day").valueOf() / 1000);
+    let startTime = moment.utc().subtract(numberOfDays, "days").startOf('day');
+    let endTime = moment.utc().endOf('day');
+
+    let response = await TransactionModel.aggregate(
+        [{
+          $match: {
+            $and: [
+              { "date": { "$gte": new Date(startTime), "$lte": new Date(endTime) } },
+              { "contractAddress": req.address }
+            ]
+          }
+        },
+          {
+            $group:
+                {
+                  _id: "$from",
+                  data: {$first:"$network"},
+                  count : { $sum : 1}
+                      
+                }
+      },
+      { $sort: { count: -1 } },
+      {
+        $project:
+        {
+          network:"$data",
+          count:1,
+          address: "$_id",
+          _id:0
+        }
+      }
+      ])
+
+    return response;
+  }
+
+  getTopFunctionCalls = async (req) => {
+
+    let numberOfDays = Number(req.numberOfDays);
+    let startTime = moment.utc().subtract(numberOfDays, "days").startOf('day');
+    let endTime = moment.utc().endOf('day');
+
+    let response = await TransactionModel.aggregate(
+        [{
+          $match: {
+            $and: [
+              { "date": { "$gte": new Date(startTime), "$lte": new Date(endTime) } },
+              { "contractAddress": req.address }
+            ]
+          }
+        },
+          {
+            $group:
+                {
+                  _id: "$function",
+                  data: {$first:"$network"},
+                  count : { $sum : 1}
+                      
+                }
+      },
+      { $sort: { count: -1 } },
+      {
+        $project:
+        {
+          network:"$data",
+          count:1,
+          function: "$_id",
+          _id:0
+        }
+      }
+      ])
+
+    return response;
+  }
+
 }
