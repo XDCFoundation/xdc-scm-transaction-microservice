@@ -17,7 +17,7 @@ export default class TransactionManager {
       transactionListRequest.limit,
       transactionListRequest.sortingKey
     );
-    let totalCount = await TransactionModel.countData({contractAddress: requestData.contractAddress});
+    let totalCount = await TransactionModel.countData(transactionListRequest.requestData);
     return { transactionList, totalCount };
   };
 
@@ -42,6 +42,12 @@ export default class TransactionManager {
     if (requestObj.selectionKeys) {
       selectionKeys = requestObj.selectionKeys;
       delete requestObj.selectionKeys;
+    }
+    let date = {};
+    if(requestObj.date){
+      date = requestObj.date;
+      delete requestObj.date;
+      requestObj["date"] = {$gte: new Date(date.fromDate), $lte : new Date(date.toDate)}
     }
     let searchQuery = [];
     if (requestObj.searchKeys && requestObj.searchValue && Array.isArray(requestObj.searchKeys) && requestObj.searchKeys.length) {
