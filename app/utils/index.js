@@ -105,11 +105,11 @@ export default class Utils {
     functionName,
     message,
     payload,
-    developerAlias,
+    developerAlias = 'AyushK',
     logType = "INFO"
   ) {
     console.log(
-      `[ {this.getFormattedDate()} ] ${logType}: ${functionName}: ${message}: ${JSON.stringify(
+      `[${Utils.getFormattedDate()}] ${logType}: ${functionName}: ${message}: ${JSON.stringify(
         payload
       )}: Developer : ${developerAlias}`
     );
