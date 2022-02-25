@@ -126,9 +126,19 @@ export default class TransactionManager {
     }
   }
 
-  saveNewTransactionsIntoDB = () => {
-
-  }
+    saveNewTransactionsIntoDB = async (transactionList) => {
+        if (!transactionList || !transactionList.length) return
+        for (let txnData of transactionList) {
+            delete txnData._id;
+            txnData.contractAddress = txnData.contractAddress || txnData.to
+            txnData.date = new Date(txnData.timestamp * 1000)
+            txnData.network = "XDC Mainnet"
+            txnData.function = await XdcService.getMethodName(txnData.input)
+            lhtWebLog("saveNewTransactions", `Saving transaction for ${txnData.contractAddress} - ${txnData.function}`)
+        }
+        await TransactionModel.collection.insertMany(transactionList);
+        lhtWebLog("saveNewTransactions", `${transactionList.length} Transactions added to DB`)
+    }
 
     fetchTransactionForNewContract = async ({contractAddress}) => {
         if (!contractAddress) return
@@ -143,7 +153,7 @@ export default class TransactionManager {
         while (skip < transactionCount) {
             const transactionList = await XdcService.getTransactionsForContract(contractAddress, skip, limit)
             if (!transactionList || !transactionList.length) return
-            for (let txnObj of transactionList){
+            for (let txnObj of transactionList) {
                 delete txnObj._id;
                 txnObj.contractAddress = txnObj.contractAddress || txnObj.to
                 txnObj.date = new Date(txnObj.timestamp * 1000)
@@ -337,7 +347,7 @@ export default class TransactionManager {
                   _id: "$from",
                   data: {$first:"$network"},
                   count : { $sum : 1}
-                      
+
                 }
       },
       { $sort: { count: -1 } },
@@ -376,7 +386,7 @@ export default class TransactionManager {
                   _id: "$function",
                   data: {$first:"$network"},
                   count : { $sum : 1}
-                      
+
                 }
       },
       { $sort: { count: -1 } },

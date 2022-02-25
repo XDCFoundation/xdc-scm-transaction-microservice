@@ -5,7 +5,7 @@ import cors from 'cors'
 
 module.exports = function (app) {
   // logs incoming requests with endpoint and response time
-  app.use(morgan(':method :url :response-time'))
+  // app.use(morgan(':method :url :response-time'))
   // parse application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({ extended: true }))
   // parse application/json
