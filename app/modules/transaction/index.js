@@ -106,5 +106,21 @@ export default class TransactionController {
       httpConstants.RESPONSE_STATUS.SUCCESS,
       httpConstants.RESPONSE_CODES.OK
     );
+  } 
+
+
+  async getTGasPriceInUSD(request, response) {
+    lhtWebLog("Inside getTGasPriceInUSD", request.body, "getTGasPriceInUSD", 0, "");
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getTGasPriceInUSD(request.body));
+    if (!getMetersRes) {
+      return Utils.handleError(error, request, response);
+    }
+    return Utils.response(
+      response,
+      getMetersRes,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
   }
 }

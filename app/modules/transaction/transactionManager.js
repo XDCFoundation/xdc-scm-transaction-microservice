@@ -1,6 +1,8 @@
 import TransactionModel from "../../models/transaction";
 import XdcService from "../../service/xdcService";
 import moment from "moment";
+const fetch = require("node-fetch");
+
 
 export default class TransactionManager {
   async addTransaction(requestData) {
@@ -403,5 +405,34 @@ export default class TransactionManager {
 
     return response;
   }
+
+  getTGasPriceInUSD = async (requestData) => {
+  
+    let usdP=await usdPrice()
+    console.log(usdP,"usdP===")
+    let gasPrice=requestData.gasPrice;
+    let xdcPrice=usdP;
+    const wei = 0.000000000000000001;
+
+    let usd=gasPrice*xdcPrice*wei;
+    console.log(usd,"usd==")
+    return usd;
+
+    
+  };
+
+}
+
+let usdPrice = async () =>{
+  return await fetch(
+    "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=XDC&CMC_PRO_API_KEY=cb190bb3-b61a-4d83-8559-374edbfb27b3"
+)
+    .then((response) => response.json())
+    //.then((responseData)=>{return responseData})
+    .then((data) => {console.log(data.data.XDC.quote.USD.price,"1111");
+    return data.data.XDC.quote.USD.price
+  })
+    .catch((err) => console.log(err));
+
 
 }
