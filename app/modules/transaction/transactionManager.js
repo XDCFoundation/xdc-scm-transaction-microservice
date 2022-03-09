@@ -1,6 +1,10 @@
 import TransactionModel from "../../models/transaction";
 import XdcService from "../../service/xdcService";
 import moment from "moment";
+import Config from "../../../config";
+import { amqpConstants } from "../../common/constants";
+import AMQPController from "../../../library";
+
 
 export default class TransactionManager {
   async addTransaction(requestData) {
@@ -137,6 +141,7 @@ export default class TransactionManager {
             lhtWebLog("saveNewTransactions", `Saving transaction for ${txnData.contractAddress} - ${txnData.function}`)
         }
         await TransactionModel.collection.insertMany(transactionList);
+        await AMQPController.insertInQueue(Config.ALERT_EXCHANGE, Config.ALERT_QUEUE, "", "", "", "", "", amqpConstants.exchangeType.FANOUT, amqpConstants.queueType.PUBLISHER_SUBSCRIBER_QUEUE, transactionList);
         lhtWebLog("saveNewTransactions", `${transactionList.length} Transactions added to DB`)
     }
 
@@ -161,6 +166,8 @@ export default class TransactionManager {
                 txnObj.function = await XdcService.getMethodName(txnObj.input)
             }
             await TransactionModel.collection.insertMany(transactionList);
+            await AMQPController.insertInQueue(Config.ALERT_EXCHANGE, Config.ALERT_QUEUE, "", "", "", "", "", amqpConstants.exchangeType.FANOUT, amqpConstants.queueType.PUBLISHER_SUBSCRIBER_QUEUE, transactionList);
+    
             skip += limit;
         }
         lhtWebLog("fetchTransactionForNewContract", `${transactionCount} Transactions fetched for ${contractAddress} from Mainnet`)
