@@ -21,7 +21,22 @@ export default class TransactionController {
 
   async getTransactionList(request, response) {
     lhtWebLog("Inside getTransactionList", request.body, "getTransactionList", 0, "");
-    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getTransactionList(request.body));
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getTransactionByHash(request.body));
+    if (!getMetersRes) {
+      return Utils.handleError(error, request, response);
+    }
+    return Utils.response(
+      response,
+      getMetersRes,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
+
+  async getTransactionByHash(request, response) {
+    lhtWebLog("Inside getTransactionByHash", request.body, "getTransactionByHash", 0, "");
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getTransactionByHash(request.body));
     if (!getMetersRes) {
       return Utils.handleError(error, request, response);
     }
