@@ -179,7 +179,7 @@ export default class TransactionManager {
         lhtWebLog("fetchTransactionForNewContract", `${transactionCount} Transactions fetched for ${contractAddress} from Mainnet`)
     }
 
-    getTransactionByHash = (requestData) =>{
+    getTransactionByHash =async (requestData) =>{
       return await TransactionModel.getTransaction({ hash: requestData.hash});
     }
 
