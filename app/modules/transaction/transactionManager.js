@@ -171,9 +171,7 @@ export default class TransactionManager {
                 txnObj.network = "XDC Mainnet"
                 txnObj.function = await XdcService.getMethodName(txnObj.input)
             }
-            await TransactionModel.collection.insertMany(transactionList);
-            await AMQPController.insertInQueue(Config.ALERT_EXCHANGE, Config.ALERT_QUEUE, "", "", "", "", "", amqpConstants.exchangeType.FANOUT, amqpConstants.queueType.PUBLISHER_SUBSCRIBER_QUEUE, transactionList);
-    
+            await TransactionModel.collection.insertMany(transactionList);    
             skip += limit;
         }
         lhtWebLog("fetchTransactionForNewContract", `${transactionCount} Transactions fetched for ${contractAddress} from Mainnet`)
