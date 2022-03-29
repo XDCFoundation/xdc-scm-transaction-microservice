@@ -83,6 +83,7 @@ export const apiFailureMessage = {
     "Device id or session token can't be empty or null",
   SESSION_GENERATION: "Unable to generate session!",
   SESSION_EXPIRED: "Session Expired!",
+  MISSING_TOKEN: "Session Token is required"
 };
 
 export const amqpConstants = {
