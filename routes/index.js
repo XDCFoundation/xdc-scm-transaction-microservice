@@ -5,8 +5,17 @@ import * as ValidationManger from "../middleware/validation";
 import { stringConstants } from "../app/common/constants";
 import TransactionModule from "../app/modules/transaction";
 import NetworkModule from "../app/modules/network/index";
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from '../config/swagger.json';
+
 module.exports = (app) => {
   app.get("/", (req, res) => res.send(stringConstants.SERVICE_STATUS_HTML));
+
+  /**
+  * create swagger UI
+  * **/
+  app.use('/swagger-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
   app.post("/transaction", new TransactionModule().addTransaction);
   app.post("/get-transaction-list", new TransactionModule().getTransactionList);
   app.post("/get-transaction",ValidationManger.validateTransactionHash, new TransactionModule().getTransactionByHash);
