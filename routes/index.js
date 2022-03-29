@@ -7,6 +7,7 @@ import TransactionModule from "../app/modules/transaction";
 import NetworkModule from "../app/modules/network/index";
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../config/swagger.json';
+import {authenticate} from "../middleware/authentication";
 
 module.exports = (app) => {
   app.get("/", (req, res) => res.send(stringConstants.SERVICE_STATUS_HTML));
