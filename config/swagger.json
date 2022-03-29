@@ -1,0 +1,229 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0",
+        "title": "Transaction MicroService",
+        "description": "MicroService to manage transactions related to contracts in the system",
+        "license": {
+            "name": "Leewayhertz",
+            "url": "http://leewayhertz.com"
+        }
+    },
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/get-transaction-list": {
+            "post": {
+                "description": "Get Paginated Transaction List",
+                "summary": "Get Paginated Transaction List",
+                "tags": [
+                    "Transactions"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/get-transaction": {
+            "post": {
+                "description": "Get Transaction By Hash",
+                "summary": "Get Transaction By Hash",
+                "tags": [
+                    "Transactions"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "transaction",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/GetTransaction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/get-transaction-analytics": {
+            "post": {
+                "description": "Get Transaction Analytics",
+                "summary": "Get Transaction Analytics",
+                "tags": [
+                    "Analytics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "analytics",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Analytics"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/get-gas-used-analytics": {
+            "post": {
+                "description": "Get Gas Used Analytics",
+                "summary": "Get Gas Used Analytics",
+                "tags": [
+                    "Analytics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "analytics",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Analytics"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/get-active-users-analytics": {
+            "post": {
+                "description": "Get Active Users Analytics",
+                "summary": "Get Active Users Analytics",
+                "tags": [
+                    "Analytics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "analytics",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Analytics"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/get-top-callers": {
+            "post": {
+                "description": "Get Top Callers Analytics",
+                "summary": "Get Top Callers Analytics",
+                "tags": [
+                    "Analytics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "analytics",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Analytics"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/get-top-function-calls": {
+            "post": {
+                "description": "Get Top Function Calls Analytics",
+                "summary": "Get Top Function Calls Analytics",
+                "tags": [
+                    "Analytics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Analytics",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Analytics"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "GetTransaction": {
+            "properties": {
+                "hash": {
+                    "type": "string"
+                }
+            }
+        },
+        "Analytics": {
+            "properties": {
+                "numberOfDays": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                }
+                
+            }
+        }
+    }
+}
