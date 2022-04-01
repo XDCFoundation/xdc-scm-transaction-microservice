@@ -144,8 +144,8 @@ export default class TransactionManager {
             txnData.date = new Date(txnData.timestamp * 1000)
             txnData.network = "XDC Mainnet"
             txnData.function = await XdcService.getMethodName(txnData.input)
-            if(txnData.function === '404: Not Found' || '400: Invalid request')
-              txnData.function = ""
+            if(txnData.function === '404: Not Found' || txnData.function === '400: Invalid request')
+              txnData.function = "";
             lhtWebLog("saveNewTransactions", `Saving transaction for ${txnData.contractAddress} - ${txnData.function}`)
         }
         await TransactionModel.collection.insertMany(transactionList);
