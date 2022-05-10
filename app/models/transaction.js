@@ -18,6 +18,9 @@ const TransactionSchema = new Schema({
   v: { type: String, default: "" },
   contractAddress: { type: String, default: "" },
   function: { type: String, default: "-" },
+  transferFrom: { type: String, default: ""},
+  transferTo: { type: String, default: ""},
+  transferValue: { type: Number, default: 0},
   network: { type: String, default: "XDC Mainnet" }, //TODO: To be removed in next version
   cumulativeGasUsed: { type: Number, default: 0 },
   logs: { type: Array, default: [] },
