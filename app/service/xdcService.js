@@ -32,4 +32,11 @@ export default class XdcService {
         const systemContractsResponse = await HTTPService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.CONTRACT_SERVICE_BASE_URL, "scm-contracts", {contracts: contractArray});
         return !systemContractsResponse || !systemContractsResponse.success ? null : systemContractsResponse.responseData;
     }
+
+    static async getSCMContractDetail(requestData) {
+        const contractResponse = await HTTPService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.CONTRACT_DETAIL, `scm-contract-detail`, requestData,{ "x-api-key": Config.SCM_X_API_KEY })
+        return !contractResponse || !contractResponse.success || !contractResponse.responseData || !Object.keys(contractResponse.responseData).length ? null : {
+            ...contractResponse.responseData
+        };
+    }
 }
