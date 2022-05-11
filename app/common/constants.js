@@ -86,6 +86,19 @@ export const apiFailureMessage = {
   MISSING_TOKEN: "Session Token is required"
 };
 
+export const functionConstants = {
+TRANSFER: "transfer(address,uint256)",
+TRANSFER_FROM: "transferFrom",
+APPROVAL: "approval(address,address,uint256)",
+INITIALIZE: "initialize(string,string,uint8,uint256)",
+APPROVE: "approve(address,uint256)",
+MINT: "mint",
+PAUSE: "pause",
+RESUME: "resume",
+OWNERSHIP: "ownership",
+BURN: "burn"
+};
+
 export const amqpConstants = {
   rabbitMqConst: {
     NO_CONNECTION: 'Server is not running. Restart your app',
@@ -104,5 +117,6 @@ export const amqpConstants = {
     FANOUT: 'fanout',
     TOPIC: 'topic'
   },
-  AMQP_PAYLOAD_TYPE: {}
+  AMQP_PAYLOAD_TYPE: {},
+
 };
