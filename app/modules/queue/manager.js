@@ -4,6 +4,31 @@ import {amqpConstants, apiFailureMessage} from "../../common/constants";
 import TransactionManager from "../transaction/transactionManager";
 
 export default class RabbitMQ {
+    async insertInQueue(
+        exchangeName,
+        queueName,
+        replyQueue,
+        topicKey,
+        routingKey,
+        replyKey,
+        requestKey,
+        exchangeType,
+        queueType,
+        queueData
+      ) {
+        return await AMQPController.insertInQueue(
+          exchangeName,
+          queueName,
+          replyQueue,
+          topicKey,
+          routingKey,
+          replyKey,
+          requestKey,
+          exchangeType,
+          queueType,
+          queueData
+        );
+      }
 
     async insertObjInUpdateContentServiceQueue(queueData) {
         // return await AMQPController.insertInQueue(Config.TRANSACTION_EXCHANGE, Config.TRANSACTION_QUEUE, {}, {}, {}, {}, {}, {}, AMQP_CONSTANTS.EXCHANGE_TYPE_FANOUT, AMQP_CONSTANTS.PUBLISHER_SUBSCRIBER_QUEUE, queueData);

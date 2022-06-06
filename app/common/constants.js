@@ -83,6 +83,20 @@ export const apiFailureMessage = {
     "Device id or session token can't be empty or null",
   SESSION_GENERATION: "Unable to generate session!",
   SESSION_EXPIRED: "Session Expired!",
+  MISSING_TOKEN: "Session Token is required"
+};
+
+export const functionConstants = {
+TRANSFER: "transfer(address,uint256)",
+TRANSFER_FROM: "transferFrom",
+APPROVAL: "approval(address,address,uint256)",
+INITIALIZE: "initialize(string,string,uint8,uint256)",
+APPROVE: "approve(address,uint256)",
+MINT: "mint",
+PAUSE: "pause",
+RESUME: "resume",
+OWNERSHIP: "ownership",
+BURN: "burn"
 };
 
 export const amqpConstants = {
@@ -103,5 +117,6 @@ export const amqpConstants = {
     FANOUT: 'fanout',
     TOPIC: 'topic'
   },
-  AMQP_PAYLOAD_TYPE: {}
+  AMQP_PAYLOAD_TYPE: {},
+
 };

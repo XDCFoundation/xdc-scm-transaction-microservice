@@ -34,6 +34,21 @@ export default class TransactionController {
     );
   }
 
+  async getTransactionByHash(request, response) {
+    lhtWebLog("Inside getTransactionByHash", request.body, "getTransactionByHash", 0, "");
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getTransactionByHash(request.body));
+    if (!getMetersRes) {
+      return Utils.handleError(error, request, response);
+    }
+    return Utils.response(
+      response,
+      getMetersRes,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
+
   async getTransactionAnalytics(request, response) {
     lhtWebLog("Inside getTransactionAnalytics", request.body, "getTransactionAnalytics", 0, "");
     const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getTransactionAnalytics(request.body));
